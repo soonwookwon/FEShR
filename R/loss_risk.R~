@@ -1,0 +1,33 @@
+loss <- function(L, y, M, T, theta) {
+
+  if (length(L) == 1) {
+    Lambda <- L
+  } else {
+    Lambda <- make_from_lowertri(L, T)
+  }
+
+  loss <- 0
+  J <- length(M)
+  
+  for(j in 1:J) {
+    diff <- thetahat_Lambda(Lambda, M[[j]], y[, j]) - theta[, j]
+    loss <- loss + sum(diff^2)
+  }
+  
+  return(loss)
+}
+
+MSE <- function(theta, thetahat, W = NULL) {
+
+  if (is.null(W)) {
+    J <- ncol(thetahat)
+    sum((theta - thetahat)^2) / J
+  }
+}
+
+average_MSE <- function(theta, thetahats) {
+  Nrep <- length(thetahats)
+  MSEs <- sapply(1:Nrep, function(rep) MSE(theta, thetahats[[rep]])) 
+
+  return(mean(MSEs))
+}

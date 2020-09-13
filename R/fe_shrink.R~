@@ -1,0 +1,13 @@
+##' 
+##'
+##' ..
+##' @param y 
+##' @param M 
+##' @param centering
+##' @export
+fe_shrink <- function(y, M, centering = c("0", "gen", "cov"),
+                      type = c("URE", "EBMLE")) {
+  if(!is.matrix(y)) warning("y is not a matrix, assuming T=1.")
+}
+
+1+1
