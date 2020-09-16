@@ -51,7 +51,9 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
         L <- opt_res$par
         Lambda_opt <- make_from_lowertri(L, T)
       }
-      
+    }
+
+    
     for (j in 1:J) {
       thetahat[, j] <- thetahat_j(mu = 0, Lambda_opt, M[[j]], y[, j])
     }
