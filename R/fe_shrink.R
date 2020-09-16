@@ -4,10 +4,11 @@
 ##' @param y a T-by-J data matrix, possibly correlated
 ##'   within each column. If a vector is provided, it is assumed that T=1 and
 ##'   will be coerced to a 1-by-length(y) matrix.
-##' @param M
-##' @param centering
+##' @param M length J list of the covaraince matrices.
+##' @param centering Centering
+##' @param type 
 ##' @export
-fe_shrink <- function(y, M, centering = c("0", "gen", "cov"),
+fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       type = c("URE", "EBMLE")) {
   if(!is.matrix(y)) {
     warning("y is not a matrix, assuming T=1.")
@@ -19,6 +20,8 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"),
 
   T <- nrow(y)
   J <- ncol(y)
+
+  if (is.null(W)) W <- diag(T) # W is always diagonal for now
   
   thetahat <- matrix(0, nrow = T, ncol = J)
   
