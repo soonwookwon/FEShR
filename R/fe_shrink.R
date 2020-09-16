@@ -29,9 +29,9 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   if (centering == "0") {
     
     if (type == "URE") {
-      obj <- make_URE_obj(y, M, centering, spg = spg)
+      obj <- make_URE_obj(y, M, centering)
     } else {
-      obj <- make_nll_obj(y, M, centering, spg = spg)
+      obj <- make_nll_obj(y, M, centering)
     }
     
     opt <- NULL
@@ -43,7 +43,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
         init_val <- .5 * j * rep(1, T*(T+1)/2)
       }
 
-      opt_res <- optim(par = rep(0, T*(T+1)/2), obj)
+      opt_res <- optim(par = init_val, obj)
       ## control=list(trace=TRUE))
       opt <- min(opt_res$val, opt)
 

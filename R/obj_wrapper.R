@@ -16,7 +16,7 @@ make_URE_obj <- function(y, M, centering) {
   return(URE_obj)
 }
 
-make_nll_obj <- function(y, M, centering, spg = FALSE) {
+make_nll_obj <- function(y, M, centering) {
 
   T <- nrow(y)
 
