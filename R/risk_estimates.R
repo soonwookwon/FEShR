@@ -21,7 +21,7 @@ URE <- function(mu, Lambda, y, M) {
     M_j <- M[[j]]
     URE <- URE + URE_j(mu, Lambda, y_j, M_j)
   }
-  return(URE)
+  return((1/J) * URE)
 }
 
 
@@ -48,7 +48,7 @@ URE_cov <- function(gamma, Lambda, y, M, Z) {
     M_j <- M[[j]]
     URE <- URE + URE_j(Z[[j]] %*% gamma, Lambda, y_j, M_j)
   }
-  return(URE)
+  return((1/J) * URE)
 }
 
 ##' @title make_URE_j
@@ -78,5 +78,5 @@ URE_j <- function(mu, Lambda, y_j, M_j) {
 URE_diag <- function(mu, Lambda, y, M) {
   inv_Lam_M <- 1 / (Lambda + M)
   URE <- -2 * sum(inv_Lam_M * M^2) + sum(M * inv_Lam_M * (y - mu)^2)
-  return(URE)
+  return((1/J) * URE)
 }

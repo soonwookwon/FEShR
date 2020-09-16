@@ -21,5 +21,5 @@ nll <- function(mu, Lambda, y, M) {
       t(y_j - mu) %*% solve(Lambda + M_j) %*% (y_j - mu)
   }
   
-  return(nll)
+  return((1/J) * nll)
 }

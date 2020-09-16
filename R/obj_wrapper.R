@@ -1,36 +1,63 @@
-make_URE_obj <- function(y, M, centering) {
+make_URE_obj <- function(y, M, centering, spg = FALSE) {
 
   T <- nrow(y)
-  
-  if (centering == "0") {
-    URE_obj <- function(L) {
-      Lambda <- make_from_lowertri(L, T)
-      return(URE(mu = 0, Lambda, y, M))
+
+  if (!spg) {
+    if (centering == "0") {
+      URE_obj <- function(L) {
+        Lambda <- make_from_lowertri(L, T)
+        return(URE(mu = 0, Lambda, y, M))
+      }
+    } else if (centering == "gen") {
+      ## insert URE for general centering case
+    } else {
+      ##  insert URE for covariate case
     }
-  } else if (centering == "gen") {
-    ## insert URE for general centering case
-  } else {
-    ##  insert URE for covariate case
+  } else if (spg) {
+    if (centering == "0") {
+      URE_obj <- function(Lambda_entries) {
+        Lambda <- matrix(Lambda_entries, nrow = T)
+        return(URE(mu = 0, Lambda, y, M))
+      }
+    } else if (centering == "gen") {
+      ## insert URE for general centering case
+    } else {
+      ##  insert URE for covariate case
+    }
   }
+ 
   
   return(URE_obj)
 }
 
-make_nll_obj <- function(y, M, centering) {
+make_nll_obj <- function(y, M, centering, spg = FALSE) {
 
   T <- nrow(y)
-  
-  if (centering == "0") {
-    nll_obj <- function(L) {
-      Lambda <- make_from_lowertri(L, T)
-      return(nll(mu = 0, Lambda, y, M))
+
+  if (!spg) {
+    if (centering == "0") {
+      nll_obj <- function(L) {
+        Lambda <- make_from_lowertri(L, T)
+        return(nll(mu = 0, Lambda, y, M))
+      }
+    } else if (centering == "gen") {
+      ## insert URE for general centering case
+    } else {
+      ##  insert URE for covariate case
     }
-  } else if (centering == "gen") {
-    ## insert URE for general centering case
-  } else {
-    ##  insert URE for covariate case
+  } else if (spg) {
+    if (centering == "0") {
+      nll_obj <- function(Lambda_entries) {
+        Lambda <- matrix(Lambda_entries, nrow = T)
+        return(nll(mu = 0, Lambda, y, M))
+      }
+    } else if (centering == "gen") {
+      ## insert URE for general centering case
+    } else {
+      ##  insert URE for covariate case
+    }
   }
-  
+   
   return(nll_obj)
 }
 
