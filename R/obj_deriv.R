@@ -23,6 +23,36 @@ make_URE_deriv <- function(y, M) {
   }
 }
 
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+make_URE_deriv_lt <- function(y, M) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  URE_deriv_lt <- function(L) {
+
+    Lambda <- make_from_lowertri(L, T)
+    URE_deriv <- 0
+
+    for (j in 1:J) {
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      URE_deriv <- URE_deriv + URE_deriv_j(Lambda, y_j, M_j)
+    }
+
+    L_mat <- matrix(0, nrow = T, ncol = T)
+    L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+    URE_deriv_lt <- (URE_deriv + t(URE_deriv)) %*% L_mat 
+    URE_deriv_lt <- URE_deriv_lt[lower.tri(URE_deriv_lt, diag = TRUE)]
+    return((1/J) * as.vector(URE_deriv_lt)) 
+  }
+}
+
+
 ##' @title make_URE_j
 ##' @description Makes the function that calculate the component of URE(mu,
 ##'   Lambda) that cooresponds to the jth observation ..
