@@ -63,7 +63,7 @@ make_URE_deriv_lt <- function(y, M) {
 
 URE_deriv_j <- function(Lambda, y_j, M_j) {
   
-  inv_Lam_Mj <- solve(Lambda + M_j)
+  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
   Mj_inv_Lam_Mj <- M_j %*% inv_Lam_Mj
   URE_deriv_j <- 2 * crossprod(Mj_inv_Lam_Mj)
   URE_deriv_j <- URE_deriv_j - inv_Lam_Mj %*% tcrossprod(y_j) %*% URE_deriv_j

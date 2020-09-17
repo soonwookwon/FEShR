@@ -9,6 +9,7 @@ Authors@R:
 Description: This package implements the procedures introduced by Kwon (2020)
 License: What license it uses
 Encoding: UTF-8
+Imports: randtoolbox
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
