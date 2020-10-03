@@ -12,7 +12,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       type = c("URE", "EBMLE"), init_vals = 1,
                       lam_range = c(.1, 1), all_init_val = FALSE,
                       use_EBMLE_opt = FALSE,
-                      use_manopt = FALSE,
+                      use_DEoptim = FALSE,/
                       print_by_init_val = FALSE,
                       verbose = FALSE) {
   
@@ -34,13 +34,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   
   if (centering == "0") {
 
-
-    all_vals <- NULL
-    all_pars <- NULL
-    
-    if (!use_manopt) {
-      
-      if (type == "URE") {
+    if (type == "URE") {
         obj <- make_URE_obj(y, M, centering)
         grad <- make_URE_deriv_lt(y, M)
         opt_alg <- "BFGS"
@@ -50,6 +44,10 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
         opt_alg <- "BFGS"
       }
 
+    all_vals <- NULL
+    all_pars <- NULL
+    
+    if (!use_DEoptim) {
       
       opt <- NULL
       init_val_mat <- matrix(0, nrow = init_vals, ncol = T*(T+1)/2)
@@ -123,17 +121,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
           Lambda_opt <- make_from_lowertri(L, T)
         }
       }
-    } else if (use_manopt) {
-      if (type == "URE") {
-        obj <- make_URE_obj(y, M, centering)
-        grad <- make_URE_deriv_lt(y, M)
-        opt_alg <- "BFGS"
-      } else {
-        obj <- make_nll_obj(y, M, centering)
-        grad <- NULL
-        opt_alg <- "BFGS"
-      }
-
+    } else if (use_DEoptim) {
       opt_res <- DEoptim::DEoptim(obj,
                                   lower = rep(-2, T * (T+1) / 2 ),
                                   upper = rep(2, T * (T+1) / 2 ),
