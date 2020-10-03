@@ -12,7 +12,6 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       type = c("URE", "EBMLE"), init_vals = 1,
                       lam_range = c(.1, 1), all_init_val = FALSE,
                       use_EBMLE_opt = FALSE,
-                      use_DEoptim = FALSE,
                       print_by_init_val = FALSE,
                       verbose = FALSE) {
   
@@ -47,89 +46,78 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
     all_vals <- NULL
     all_pars <- NULL
     
-    if (!use_DEoptim) {
-      
-      opt <- NULL
-      init_val_mat <- matrix(0, nrow = init_vals, ncol = T*(T+1)/2)
+       
+    opt <- NULL
+    init_val_mat <- matrix(0, nrow = init_vals, ncol = T*(T+1)/2)
 
-      ## for(j in 1:init_vals) {
-      ##   if (j == 1) {
-      ##     init_val_mat[j, ] <- .5 * rep(1, T*(T+1)/2)
-      ##   } else {
-      ##     init_val_mat[j, ] <-.1 * j + j * rnorm(T*(T+1)/2)
-      ##   }
+    ## for(j in 1:init_vals) {
+    ##   if (j == 1) {
+    ##     init_val_mat[j, ] <- .5 * rep(1, T*(T+1)/2)
+    ##   } else {
+    ##     init_val_mat[j, ] <-.1 * j + j * rnorm(T*(T+1)/2)
+    ##   }
+    ## }
+
+    init_diags <- t(rep(lam_range[1], T) + (lam_range[2] - lam_range[1]) *
+                      t(randtoolbox::sobol(init_vals, dim = T)))
+    init_val_mat <- sapply(1:init_vals,
+                           function(j) extract_lowertri(diag(init_diags[j, ])))
+    init_val_mat <- t(init_val_mat)
+    
+    lam_seq <- seq(max(lam_range[1], 0), lam_range[2], length.out = init_vals)
+    init_vals_equl <- t(sapply(1:init_vals,
+                               function(j) {
+                                 extract_lowertri(lam_seq[j] * diag(T))
+                               })
+                        )
+    init_val_mat <- rbind(init_vals_equl, init_val_mat)
+
+    # EBMLE opt par
+    if (use_EBMLE_opt) {
+      EBMLE_obj <- make_nll_obj(y, M, centering)
+      EBMLE_opt_par <-
+        optim(par = init_val_mat[1, ],
+              obj,
+              method = "BFGS")$par
+      init_val_mat <- rbind(EBMLE_opt_par, init_val_mat)
+    }
+    ## solver <- ifelse(use_optimx, optimx::optimx, optim)
+    ## opt_res <- solver(par = init_val, obj)
+    
+    for (j in 1:nrow(init_val_mat)) {
+      init_val <- init_val_mat[j, ]
+      opt_res <- optim(par = init_val, gr = grad, obj, method = opt_alg)
+      
+      ## control=list(trace=TRUE))
+      ## if (verbose) {
+      ##   print(paste0(j, "th initial value: ",
+      ##                paste0(init_val, collapse = ", ")))
+      ##   print("Min")
+      ##   print(opt_res$val)
+      ##   print("Par")
+      ##   print(opt_res$par)
       ## }
 
-      init_diags <- t(rep(lam_range[1], T) + (lam_range[2] - lam_range[1]) *
-                        t(randtoolbox::sobol(init_vals, dim = T)))
-      init_val_mat <- sapply(1:init_vals,
-                             function(j) extract_lowertri(diag(init_diags[j, ])))
-      init_val_mat <- t(init_val_mat)
-      
-      lam_seq <- seq(max(lam_range[1], 0), lam_range[2], length.out = init_vals)
-      init_vals_equl <- t(sapply(1:init_vals,
-                                 function(j) {
-                                   extract_lowertri(lam_seq[j] * diag(T))
-                                 })
-                          )
-      init_val_mat <- rbind(init_vals_equl, init_val_mat)
+      if (all_init_val) {
+        all_vals <- c(all_vals, opt_res$val)
+        all_pars <- rbind(all_pars, opt_res$par)
 
-      # EBMLE opt par
-      if (use_EBMLE_opt) {
-        EBMLE_obj <- make_nll_obj(y, M, centering)
-        EBMLE_opt_par <-
-          optim(par = init_val_mat[1, ],
-                obj,
-                method = "BFGS")$par
-        init_val_mat <- rbind(EBMLE_opt_par, init_val_mat)
-      }
-      ## solver <- ifelse(use_optimx, optimx::optimx, optim)
-      ## opt_res <- solver(par = init_val, obj)
-      
-      for (j in 1:nrow(init_val_mat)) {
-        init_val <- init_val_mat[j, ]
-        opt_res <- optim(par = init_val, gr = grad, obj, method = opt_alg)
-        
-        ## control=list(trace=TRUE))
-        ## if (verbose) {
-        ##   print(paste0(j, "th initial value: ",
-        ##                paste0(init_val, collapse = ", ")))
-        ##   print("Min")
-        ##   print(opt_res$val)
-        ##   print("Par")
-        ##   print(opt_res$par)
-        ## }
-
-        if (all_init_val) {
-          all_vals <- c(all_vals, opt_res$val)
-          all_pars <- rbind(all_pars, opt_res$par)
-
-          if (print_by_init_val) {
-            if (j %% 5 == 0) {
-              print(paste0(rep("=", 80), collapse = ""))
-              print(all_vals)
-            }
+        if (print_by_init_val) {
+          if (j %% 5 == 0) {
+            print(paste0(rep("=", 80), collapse = ""))
+            print(all_vals)
           }
-          
-          ## print(all_pars)
         }
         
-        opt <- min(opt_res$val, opt)
-
-        if (opt == opt_res$val) {
-          L <- opt_res$par
-          Lambda_opt <- make_from_lowertri(L, T)
-        }
+        ## print(all_pars)
       }
-    } else if (use_DEoptim) {
-      opt_res <- DEoptim::DEoptim(obj,
-                                  lower = rep(-2, T * (T+1) / 2 ),
-                                  upper = rep(2, T * (T+1) / 2 ),
-                                  control = list(itermax = 200))
-      opt <- opt_res$optim$bestval
-      ## print(opt_res)  
-      L <- opt_res$optim$bestmem
-      Lambda_opt <- make_from_lowertri(L, T)
+      
+      opt <- min(opt_res$val, opt)
+
+      if (opt == opt_res$val) {
+        L <- opt_res$par
+        Lambda_opt <- make_from_lowertri(L, T)
+      }
     }
     
     for (j in 1:J) {
