@@ -56,11 +56,9 @@ make_URE_deriv_lt <- function(y, M) {
 ##' @title make_URE_j
 ##' @description Makes the function that calculate the component of URE(mu,
 ##'   Lambda) that cooresponds to the jth observation ..
-##' @param mu 
 ##' @param Lambda 
 ##' @param y_j 
-##' @param M_j
-
+##' @param M_j 
 URE_deriv_j <- function(Lambda, y_j, M_j) {
   
   inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
@@ -76,7 +74,7 @@ check_deriv <- function(y, M, Lambda_entries) {
   T <- nrow(y)
   J <- ncol(y)
 
-  obj <- make_URE_obj(y, M, centering = "0", spg = TRUE)
+  obj <- make_URE_obj(y, M, centering = "0")
   numer_gr <- numDeriv::grad(obj, Lambda_entries)
   obj_deriv <- make_URE_deriv(y, M)
   an_gr <- obj_deriv(Lambda_entries)

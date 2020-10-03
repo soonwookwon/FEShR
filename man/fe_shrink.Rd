@@ -15,7 +15,8 @@ fe_shrink(
   all_init_val = FALSE,
   use_EBMLE_opt = FALSE,
   use_DEoptim = FALSE,
-  print_by_init_val = FALSE
+  print_by_init_val = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{

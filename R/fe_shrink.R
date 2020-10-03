@@ -13,7 +13,8 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       lam_range = c(.1, 1), all_init_val = FALSE,
                       use_EBMLE_opt = FALSE,
                       use_DEoptim = FALSE,
-                      print_by_init_val = FALSE) {
+                      print_by_init_val = FALSE,
+                      verbose = FALSE) {
   
   if(!is.matrix(y)) {
     warning("y is not a matrix, assuming T=1.")
@@ -23,6 +24,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   centering <- match.arg(centering)
   type <- match.arg(type)
 
+  print(paste0("method=", type, "#init_vals=", init_vals))
   T <- nrow(y)
   J <- ncol(y)
 
@@ -64,7 +66,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                              function(j) extract_lowertri(diag(init_diags[j, ])))
       init_val_mat <- t(init_val_mat)
       
-      lam_seq <- seq(lam_range[1], lam_range[2], length.out = init_vals)
+      lam_seq <- seq(max(lam_range[1], 0), lam_range[2], length.out = init_vals)
       init_vals_equl <- t(sapply(1:init_vals,
                                  function(j) {
                                    extract_lowertri(lam_seq[j] * diag(T))
@@ -139,8 +141,11 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   } else {
     ##  insert URE for covariate case
   }
-  print(opt)
-  print(Lambda_opt)
+  if (verbose) {
+    print(opt)
+    print(Lambda_opt)
+  }
+  
   return(list(thetahat = thetahat, Lambda_opt = Lambda_opt, obj_val = opt,
               all_vals = all_vals, all_pars = all_pars))
 }

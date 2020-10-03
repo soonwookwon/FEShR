@@ -7,12 +7,13 @@
 URE_diag(mu, Lambda, y, M)
 }
 \arguments{
-\item{mu}{location vector to be tuned}
+\item{mu}{}
 
-\item{Lambda}{a T vector to be tuned}
+\item{Lambda}{}
 
-\item{y}{a TJ vector of the observations, which is constructed by
-concatenating the y_j's (as opposed to concatenating the y_t's)}
+\item{y}{}
+
+\item{M}{}
 }
 \description{
 Calculates URE(mu, Lambda) as defined in Xie, Kou, and Brown

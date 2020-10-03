@@ -5,7 +5,6 @@
 ##' @param Lambda 
 ##' @param y a T-by-J data matrix
 ##' @param M a length J list with the corresponding covariance matrices 
-##' @param T 
 URE <- function(mu, Lambda, y, M) {
 
   if (!is.matrix(y)) {
@@ -32,7 +31,7 @@ URE <- function(mu, Lambda, y, M) {
 ##' @param Lambda 
 ##' @param y a T-by-J data matrix
 ##' @param M a length J list with the corresponding covariance matrices 
-##' @param Z a length J list with the corresponding T-by-k covariate matrices
+##' @param Z 
 URE_cov <- function(gamma, Lambda, y, M, Z) {
 
   if (!is.matrix(y)) {
@@ -54,11 +53,13 @@ URE_cov <- function(gamma, Lambda, y, M, Z) {
 ##' @title make_URE_j
 ##' @description Makes the function that calculate the component of URE(mu,
 ##'   Lambda) that cooresponds to the jth observation ..
-##' @param y_j
-##' @param M_j
+##' @param mu 
+##' @param Lambda 
+##' @param y_j 
+##' @param M_j 
 URE_j <- function(mu, Lambda, y_j, M_j) {
 
-  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
+  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j, pivot = TRUE))
   URE_j <- -2 * sum(diag(inv_Lam_Mj %*% M_j %*% M_j))
   URE_j <- URE_j + sum((M_j %*% inv_Lam_Mj %*% (y_j - mu))^2)
 
@@ -70,11 +71,10 @@ URE_j <- function(mu, Lambda, y_j, M_j) {
 ##' @description Calculates URE(mu, Lambda) as defined in Xie, Kou, and Brown
 ##'   (2012), but allowed to have different lambdas periodwise
 ##' 
-##' @param mu location vector to be tuned
-##' @param Lambda a T vector to be tuned
-##' @param y a TJ vector of the observations, which is constructed by
-##'   concatenating the y_j's (as opposed to concatenating the y_t's)
-##' @param M
+##' @param mu 
+##' @param Lambda 
+##' @param y 
+##' @param M 
 URE_diag <- function(mu, Lambda, y, M) {
   inv_Lam_M <- 1 / (Lambda + M)
   URE <- -2 * sum(inv_Lam_M * M^2) + sum(M * inv_Lam_M * (y - mu)^2)

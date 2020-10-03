@@ -14,8 +14,6 @@ URE(mu, Lambda, y, M)
 \item{y}{a T-by-J data matrix}
 
 \item{M}{a length J list with the corresponding covariance matrices}
-
-\item{T}{}
 }
 \description{
 Calculates URE(mu, Lambda) as defined in Kwon (2020)

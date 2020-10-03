@@ -15,7 +15,7 @@ URE_cov(gamma, Lambda, y, M, Z)
 
 \item{M}{a length J list with the corresponding covariance matrices}
 
-\item{Z}{a length J list with the corresponding T-by-k covariate matrices}
+\item{Z}{}
 }
 \description{
 Calculates URE(Z gamma, Lambda) as defined in Kwon (2020)

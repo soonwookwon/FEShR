@@ -6,6 +6,15 @@
 \usage{
 URE_j(mu, Lambda, y_j, M_j)
 }
+\arguments{
+\item{mu}{}
+
+\item{Lambda}{}
+
+\item{y_j}{}
+
+\item{M_j}{}
+}
 \description{
 Makes the function that calculate the component of URE(mu,
 Lambda) that cooresponds to the jth observation ..

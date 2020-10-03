@@ -11,7 +11,7 @@ URE_deriv_j(Lambda, y_j, M_j)
 
 \item{y_j}{}
 
-\item{mu}{}
+\item{M_j}{}
 }
 \description{
 Makes the function that calculate the component of URE(mu,
