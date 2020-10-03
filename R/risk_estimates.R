@@ -59,7 +59,7 @@ URE_cov <- function(gamma, Lambda, y, M, Z) {
 ##' @param M_j 
 URE_j <- function(mu, Lambda, y_j, M_j) {
 
-  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j, pivot = TRUE))
+  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
   URE_j <- -2 * sum(diag(inv_Lam_Mj %*% M_j %*% M_j))
   URE_j <- URE_j + sum((M_j %*% inv_Lam_Mj %*% (y_j - mu))^2)
 

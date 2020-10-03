@@ -11,8 +11,6 @@
 fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       type = c("URE", "EBMLE"), init_vals = 1,
                       lam_range = c(.1, 1), all_init_val = FALSE,
-                      use_EBMLE_opt = FALSE,
-                      use_DEoptim = FALSE,/
                       print_by_init_val = FALSE,
                       verbose = FALSE) {
   
@@ -75,14 +73,14 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
       init_val_mat <- rbind(init_vals_equl, init_val_mat)
 
       # EBMLE opt par
-      if (use_EBMLE_opt) {
-        EBMLE_obj <- make_nll_obj(y, M, centering)
-        EBMLE_opt_par <-
-          optim(par = init_val_mat[1, ],
-                obj,
-                method = "BFGS")$par
-        init_val_mat <- rbind(EBMLE_opt_par, init_val_mat)
-      }
+      ## if (use_EBMLE_opt) {
+      ##   EBMLE_obj <- make_nll_obj(y, M, centering)
+      ##   EBMLE_opt_par <-
+      ##     optim(par = init_val_mat[1, ],
+      ##           obj,
+      ##           method = "BFGS")$par
+      ##   init_val_mat <- rbind(EBMLE_opt_par, init_val_mat)
+      ## }
       ## solver <- ifelse(use_optimx, optimx::optimx, optim)
       ## opt_res <- solver(par = init_val, obj)
       
