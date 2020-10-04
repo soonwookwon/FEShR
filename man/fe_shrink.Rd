@@ -12,7 +12,6 @@ fe_shrink(
   type = c("URE", "EBMLE"),
   n_init_vals = 1,
   all_init_val = FALSE,
-  print_by_init_val = FALSE,
   verbose = FALSE
 )
 }

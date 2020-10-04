@@ -36,45 +36,105 @@ make_oracle_obj <- function(thetas, y, M, centering, diag) {
   
   return(oracle_obj)
 }
+
+
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+make_ol_deriv <- function(y, M, thetas) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  ol_deriv <- function(Lambda_entries) {
+
+    Lambda <- matrix(Lambda_entries, nrow = T)
+    ol_deriv <- 0
+
+    for (j in 1:J) {
+      theta_j <- thetas[, j]
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      ol_deriv <- ol_deriv + ol_deriv_j(Lambda, y_j, M_j, theta_j)
+    }
+    
+    return((1/J) * as.vector(t(ol_deriv))) 
+  }
+}
+
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+##' @param thetas 
+make_ol_deriv_lt <- function(y, M, thetas) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  ol_deriv_lt <- function(L) {
+
+    Lambda <- make_from_lowertri(L, T)
+    ol_deriv <- 0
+
+    for (j in 1:J) {
+      theta_j <- thetas[, j]
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      ol_deriv <- ol_deriv + ol_deriv_j(Lambda, y_j, M_j, theta_j)
+    }
+
+    L_mat <- matrix(0, nrow = T, ncol = T)
+    L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+    ol_deriv_lt <- (ol_deriv + t(ol_deriv)) %*% L_mat 
+    ol_deriv_lt <- ol_deriv_lt[lower.tri(ol_deriv_lt, diag = TRUE)]
+    return((1/J) * as.vector(ol_deriv_lt)) 
+  }
+}
+
+
+##' @title Derivative of URE
+##' @description Makes the function that calculate the component of URE(mu,
+##'   Lambda) that cooresponds to the jth observation ..
+##' @param Lambda 
+##' @param y_j 
+##' @param M_j 
+ol_deriv_j <- function(Lambda, y_j, M_j, theta_j) {
+  
+  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
+  Mj_inv_Lam_Mj <- M_j %*% inv_Lam_Mj
+  ol_deriv_j <- 2 * t(Mj_inv_Lam_Mj) %*% (y_j - theta_j) %*% t(y_j) %*%
+    inv_Lam_Mj - 2 * inv_Lam_Mj %*% tcrossprod(y_j) %*% crossprod(Mj_inv_Lam_Mj)
+
+  return(ol_deriv_j)
+}
+
+
 #' @export
-get_theta_ol <- function(thetas, y, M, centering, diag = FALSE) {
+get_theta_ol <- function(thetas, y, M, centering, diag = FALSE, n_init_vals) {
 
   T <- nrow(y)
   J <- ncol(y)
  
   theta_ol <- matrix(0, nrow = T, ncol = J)
   obj <- make_oracle_obj(thetas, y, M, centering, diag = diag)
+  grad <- make_ol_deriv_lt(y, M, thetas)
 
   if (!diag) {
-    # Get init vals
-    init_val_mat <- matrix(0, nrow = init_vals, ncol = T*(T+1)/2)
-
-    init_diags <- t(rep(lam_range[1], T) + (lam_range[2] - lam_range[1]) *
-                      t(randtoolbox::sobol(init_vals, dim = T)))
-    init_val_mat <- sapply(1:init_vals,
-                           function(j) extract_lowertri(diag(init_diags[j, ])))
-    init_val_mat <- t(init_val_mat)
-    
-    lam_seq <- seq(max(lam_range[1], 0), lam_range[2], length.out = init_vals)
-    init_vals_equl <- t(sapply(1:init_vals,
-                               function(j) {
-                                 extract_lowertri(lam_seq[j] * diag(T))
-                               })
-                        )
-    init_val_mat <- rbind(init_vals_equl, init_val_mat)
+    init_val_mat <- matrix(rnorm(n_init_vals * T * (T + 1) / 2),
+                           nrow = n_init_vals)
   } else {
-    lam_seq <- seq(max(lam_range[1], 0), lam_range[2], length.out = init_vals)
-    init_vals_equl <- t(sapply(1:init_vals,
-                               function(j) {lam_seq[j] * rep(1, T)})
-                        )
-    init_val_mat <- init_vals_equl
+    init_val_mat <- matrix(rnorm(n_init_vals * T), nrow = n_init_vals)
   }
   
 
   opt <- NULL
   for (j in 1:nrow(init_val_mat)) {
     init_val <- init_val_mat[j, ]
-    opt_res <- optim(par = init_val, obj, method = "BFGS")
+    opt_res <- optim(par = init_val, obj, gr = grad, method = "BFGS")
  
     opt <- min(opt_res$val, opt)
     
@@ -93,9 +153,8 @@ get_theta_ol <- function(thetas, y, M, centering, diag = FALSE) {
     theta_ol[, j] <- thetahat_j(mu = 0, Lambda_ol, M[[j]], y[, j])
   }
 
-  print(opt)
-  print(Lambda_ol)
-
+  ## print(opt)
+  ## print(Lambda)
+  
   return(list(theta_ol = theta_ol, Lambda_ol = Lambda_ol, obj_val = opt))
-  return(theta_ol)
 }
