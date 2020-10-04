@@ -32,10 +32,10 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
 
     if (type == "URE") {
         obj <- make_URE_obj(y, M, centering)
-        grad <- make_URE_deriv_lt(y, M)
+        grad <- make_URE_deriv_lt(y, M, centering)
       } else {
         obj <- make_nll_obj(y, M, centering)
-        grad <- make_nll_deriv_lt(y, M)
+        grad <- make_nll_deriv_lt(y, M, centering)
       }
 
     all_vals <- NULL

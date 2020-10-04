@@ -2,7 +2,7 @@
 % Please edit documentation in R/risk_estimates.R
 \name{URE_j}
 \alias{URE_j}
-\title{make_URE_j}
+\title{URE_j}
 \usage{
 URE_j(mu, Lambda, y_j, M_j)
 }

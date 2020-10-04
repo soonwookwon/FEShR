@@ -140,7 +140,7 @@ nll_deriv_j <- function(Lambda, y_j, M_j, mu) {
 }
 
 ##'@export
-check_deriv <- function(y, M, Lambda_lt, thetas = NULL, method) {
+check_deriv <- function(y, M, mu = 0, Lambda_lt, thetas = NULL, method) {
   T <- nrow(y)
   J <- ncol(y)
   

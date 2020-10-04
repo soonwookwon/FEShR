@@ -4,7 +4,7 @@
 \alias{make_URE_deriv}
 \title{URE}
 \usage{
-make_URE_deriv(y, M)
+make_URE_deriv(y, M, mu = 0)
 }
 \arguments{
 \item{y}{a T-by-J data matrix}
