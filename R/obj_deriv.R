@@ -53,7 +53,7 @@ make_URE_deriv_lt <- function(y, M) {
 }
 
 
-##' @title make_URE_j
+##' @title Derivative of URE
 ##' @description Makes the function that calculate the component of URE(mu,
 ##'   Lambda) that cooresponds to the jth observation ..
 ##' @param Lambda 
@@ -69,15 +69,171 @@ URE_deriv_j <- function(Lambda, y_j, M_j) {
   return(URE_deriv_j)
 }
 
-## @export
-check_deriv <- function(y, M, Lambda_entries) {
+
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+make_nll_deriv <- function(y, M) {
+
   T <- nrow(y)
   J <- ncol(y)
+  
+  nll_deriv <- function(Lambda_entries) {
 
-  obj <- make_URE_obj(y, M, centering = "0")
-  numer_gr <- numDeriv::grad(obj, Lambda_entries)
-  obj_deriv <- make_URE_deriv(y, M)
-  an_gr <- obj_deriv(Lambda_entries)
+    Lambda <- matrix(Lambda_entries, nrow = T)
+    nll_deriv <- 0
 
-  return(list(matrix(numer_gr, nrow = T), matrix(an_gr, nrow = T)))
+    for (j in 1:J) {
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      nll_deriv <- nll_deriv + nll_deriv_j(Lambda, y_j, M_j)
+    }
+    
+    return((1/J) * as.vector(t(nll_deriv))) 
+  }
+}
+
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+make_nll_deriv_lt <- function(y, M) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  nll_deriv_lt <- function(L) {
+
+    Lambda <- make_from_lowertri(L, T)
+    nll_deriv <- 0
+
+    for (j in 1:J) {
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      nll_deriv <- nll_deriv + nll_deriv_j(Lambda, y_j, M_j)
+    }
+
+    L_mat <- matrix(0, nrow = T, ncol = T)
+    L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+    nll_deriv_lt <- (nll_deriv + t(nll_deriv)) %*% L_mat 
+    nll_deriv_lt <- nll_deriv_lt[lower.tri(nll_deriv_lt, diag = TRUE)]
+    return((1/J) * as.vector(nll_deriv_lt)) 
+  }
+}
+
+
+##' @title Derivative of URE
+##' @description Makes the function that calculate the component of URE(mu,
+##'   Lambda) that cooresponds to the jth observation ..
+##' @param Lambda 
+##' @param y_j 
+##' @param M_j 
+nll_deriv_j <- function(Lambda, y_j, M_j) {
+  
+  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
+  nll_deriv_j <- inv_Lam_Mj - tcrossprod(inv_Lam_Mj %*% y_j)
+  
+  return(nll_deriv_j)
+}
+
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+make_ol_deriv <- function(y, M, thetas) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  ol_deriv <- function(Lambda_entries) {
+
+    Lambda <- matrix(Lambda_entries, nrow = T)
+    ol_deriv <- 0
+
+    for (j in 1:J) {
+      theta_j <- thetas[, j]
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      ol_deriv <- ol_deriv + ol_deriv_j(Lambda, y_j, M_j, theta_j)
+    }
+    
+    return((1/J) * as.vector(t(ol_deriv))) 
+  }
+}
+
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+make_ol_deriv_lt <- function(y, M, thetas) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  ol_deriv_lt <- function(L) {
+
+    Lambda <- make_from_lowertri(L, T)
+    ol_deriv <- 0
+
+    for (j in 1:J) {
+      theta_j <- thetas[, j]
+      y_j <- y[, j]
+      M_j <- M[[j]]
+      ol_deriv <- ol_deriv + ol_deriv_j(Lambda, y_j, M_j, theta_j)
+    }
+
+    L_mat <- matrix(0, nrow = T, ncol = T)
+    L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+    ol_deriv_lt <- (ol_deriv + t(ol_deriv)) %*% L_mat 
+    ol_deriv_lt <- ol_deriv_lt[lower.tri(ol_deriv_lt, diag = TRUE)]
+    return((1/J) * as.vector(ol_deriv_lt)) 
+  }
+}
+
+
+##' @title Derivative of URE
+##' @description Makes the function that calculate the component of URE(mu,
+##'   Lambda) that cooresponds to the jth observation ..
+##' @param Lambda 
+##' @param y_j 
+##' @param M_j 
+ol_deriv_j <- function(Lambda, y_j, M_j, theta_j) {
+  
+  inv_Lam_Mj <- chol2inv(chol(Lambda + M_j))
+  Mj_inv_Lam_Mj <- M_j %*% inv_Lam_Mj
+  ol_deriv_j <- 2 * inv_Lam_Mj %*% y_j %*% t(y_j - theta_j) %*% inv_Lam_Mj -
+    2 * inv_Lam_Mj %*% tcrossprod(y_j) %*% crossprod(Mj_inv_Lam_Mj)
+
+  return(ol_deriv_j)
+}
+
+##'@export
+check_deriv <- function(y, M, Lambda_lt, thetas = NULL, method) {
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  if (method == "URE") {
+    obj <- make_URE_obj(y, M, centering = "0")
+    numer_gr <- numDeriv::grad(obj, Lambda_lt)
+    obj_deriv <- make_URE_deriv_lt(y, M)
+    an_gr <- obj_deriv(Lambda_lt)
+  } else if (method == "EBMLE") {
+    obj <- make_nll_obj(y, M, centering = "0")
+    numer_gr <- numDeriv::grad(obj, Lambda_lt)
+    obj_deriv <- make_nll_deriv_lt(y, M)
+    an_gr <- obj_deriv(Lambda_lt)
+  } else if (method == "ol") {
+    obj <- make_oracle_obj(thetas, y, M, centering = "0", diag = FALSE)
+    numer_gr <- numDeriv::grad(obj, Lambda_lt)
+    obj_deriv <- make_ol_deriv_lt(y, M, thetas)
+    an_gr <- obj_deriv(Lambda_lt)
+  }
+  
+
+  return(data.frame(numerical = numer_gr, analytical = an_gr))
 }

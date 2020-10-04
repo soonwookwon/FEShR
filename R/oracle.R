@@ -37,8 +37,7 @@ make_oracle_obj <- function(thetas, y, M, centering, diag) {
   return(oracle_obj)
 }
 #' @export
-get_theta_ol <- function(thetas, y, M, centering, lam_range, init_vals = 1,
-                         diag = FALSE) {
+get_theta_ol <- function(thetas, y, M, centering, diag = FALSE) {
 
   T <- nrow(y)
   J <- ncol(y)

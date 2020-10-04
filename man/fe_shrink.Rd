@@ -10,11 +10,8 @@ fe_shrink(
   centering = c("0", "gen", "cov"),
   W = NULL,
   type = c("URE", "EBMLE"),
-  init_vals = 1,
-  lam_range = c(0.1, 1),
+  n_init_vals = 1,
   all_init_val = FALSE,
-  use_EBMLE_opt = FALSE,
-  use_DEoptim = FALSE,
   print_by_init_val = FALSE,
   verbose = FALSE
 )

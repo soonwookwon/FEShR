@@ -2,7 +2,7 @@
 % Please edit documentation in R/obj_deriv.R
 \name{URE_deriv_j}
 \alias{URE_deriv_j}
-\title{make_URE_j}
+\title{Derivative of URE}
 \usage{
 URE_deriv_j(Lambda, y_j, M_j)
 }
