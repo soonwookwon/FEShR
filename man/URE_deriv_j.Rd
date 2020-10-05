@@ -4,7 +4,7 @@
 \alias{URE_deriv_j}
 \title{Derivative of URE}
 \usage{
-URE_deriv_j(Lambda, y_j, M_j, mu = 0)
+URE_deriv_j(mu_j, Lambda, y_j, M_j)
 }
 \arguments{
 \item{Lambda}{}

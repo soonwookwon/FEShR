@@ -7,17 +7,11 @@
 ##' @param M a length J list with the corresponding covariance matrices 
 URE <- function(mu, Lambda, y, M) {
 
-  if (!is.matrix(y)) {
-    stop("y must be a matrix")
-  }
-
-  if (mu == 0) {
-    mu <- matrix(0, nrow = nrow(y), ncol = ncol(y))
-  } else if (length(mu) == ncol(y)) {
-    mu <- matrix(rep(mu, nrow(y)), nrow = nrow(y), ncol = ncol(y))
+  if (!is.matrix(y) | !is.matrix(mu)) {
+    stop("y and mu must be matrices")
   }
   
-  T <- nrow(y)
+
   J <- ncol(y)
  
   URE <- 0

@@ -4,7 +4,7 @@
 \alias{nll_deriv_j}
 \title{Derivative of URE}
 \usage{
-nll_deriv_j(Lambda, y_j, M_j, mu)
+nll_deriv_j(Lambda, y_j, M_j, mu_j)
 }
 \arguments{
 \item{Lambda}{}

@@ -37,6 +37,27 @@ make_oracle_obj <- function(thetas, y, M, centering, diag) {
   return(oracle_obj)
 }
 
+make_oracle_cpp_obj <- function(thetas, mu, y, M, diag) {
+  
+  T <- nrow(y)
+  J <- ncol(y)
+  
+
+  if (!diag) {
+    oracle_obj <- function(L) {
+      Lambda <- make_from_lowertri(L, T)
+      return((1/J) * oracle_loss_cpp(thetas, mu, Lambda, y, M))
+    }
+  } else {
+    oracle_obj <- function(D) {
+      Lambda <- diag(D)^2
+      return((1/J) * oracle_loss_cpp(thetas, mu, Lambda, y, M))
+    }
+  }
+  
+  return(oracle_obj)
+}
+
 
 ##' @title URE
 ##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
@@ -95,6 +116,31 @@ make_ol_deriv_lt <- function(y, M, thetas) {
   }
 }
 
+##' @title URE
+##' @description Calculates URE(mu, Lambda) as defined in Kwon (2020)
+##' 
+##' @param y a T-by-J data matrix
+##' @param M a length J list with the corresponding covariance matrices 
+##' @param thetas 
+make_ol_cpp_deriv_lt <- function(thetas, mu, y, M) {
+
+  T <- nrow(y)
+  J <- ncol(y)
+  
+  ol_deriv_lt <- function(L) {
+
+    Lambda <- make_from_lowertri(L, T)
+    ol_deriv <- ol_cpp_deriv(thetas, mu, Lambda, y, M)
+    
+    L_mat <- matrix(0, nrow = T, ncol = T)
+    L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+    ol_deriv_lt <- (ol_deriv + t(ol_deriv)) %*% L_mat 
+    ol_deriv_lt <- ol_deriv_lt[lower.tri(ol_deriv_lt, diag = TRUE)]
+
+    return((1/J) * as.vector(ol_deriv_lt)) 
+  }
+}
+
 
 ##' @title Derivative of URE
 ##' @description Makes the function that calculate the component of URE(mu,
@@ -114,14 +160,21 @@ ol_deriv_j <- function(Lambda, y_j, M_j, theta_j) {
 
 
 #' @export
-get_theta_ol <- function(thetas, y, M, centering, diag = FALSE, n_init_vals) {
+get_theta_ol <- function(thetas, y, M, centering, diag = FALSE, n_init_vals,
+                         use_cpp = FALSE) {
 
   T <- nrow(y)
   J <- ncol(y)
  
   theta_ol <- matrix(0, nrow = T, ncol = J)
-  obj <- make_oracle_obj(thetas, y, M, centering, diag = diag)
-  grad <- make_ol_deriv_lt(y, M, thetas)
+  if (!use_cpp) {
+    obj <- make_oracle_obj(thetas, y, M, centering, diag = diag)
+    grad <- make_ol_deriv_lt(y, M, thetas)
+  } else {
+    obj <- make_oracle_cpp_obj(thetas, mu = matrix(0, T, J), M, diag = diag)
+    grad <- make_ol_cpp_deriv_lt(thetas, mu = matrix(0, T, J), y, M)
+  }
+  
 
   if (!diag) {
     init_val_mat <- matrix(rnorm(n_init_vals * T * (T + 1) / 2),

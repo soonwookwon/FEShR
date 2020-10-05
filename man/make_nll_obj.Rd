@@ -6,6 +6,13 @@
 \usage{
 make_nll_obj(mu, y, M)
 }
+\arguments{
+\item{mu}{}
+
+\item{y}{}
+
+\item{M}{}
+}
 \description{
 Create objective function for optimizing Lambda that takes the centring term
 as given

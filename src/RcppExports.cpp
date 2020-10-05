@@ -20,6 +20,50 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ebmle_cpp_deriv
+arma::mat ebmle_cpp_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
+RcppExport SEXP _FEShR_ebmle_cpp_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(ebmle_cpp_deriv(mu, Lambda, y, M));
+    return rcpp_result_gen;
+END_RCPP
+}
+// oracle_loss_cpp
+double oracle_loss_cpp(const arma::mat& thetas, const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
+RcppExport SEXP _FEShR_oracle_loss_cpp(SEXP thetasSEXP, SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type thetas(thetasSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(oracle_loss_cpp(thetas, mu, Lambda, y, M));
+    return rcpp_result_gen;
+END_RCPP
+}
+// oracle_cpp_deriv
+arma::mat oracle_cpp_deriv(const arma::mat& thetas, const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
+RcppExport SEXP _FEShR_oracle_cpp_deriv(SEXP thetasSEXP, SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type thetas(thetasSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(oracle_cpp_deriv(thetas, mu, Lambda, y, M));
+    return rcpp_result_gen;
+END_RCPP
+}
 // URE_cpp
 double URE_cpp(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
 RcppExport SEXP _FEShR_URE_cpp(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
@@ -34,10 +78,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// URE_cpp_deriv
+arma::mat URE_cpp_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
+RcppExport SEXP _FEShR_URE_cpp_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(URE_cpp_deriv(mu, Lambda, y, M));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_FEShR_nll_cpp", (DL_FUNC) &_FEShR_nll_cpp, 4},
+    {"_FEShR_ebmle_cpp_deriv", (DL_FUNC) &_FEShR_ebmle_cpp_deriv, 4},
+    {"_FEShR_oracle_loss_cpp", (DL_FUNC) &_FEShR_oracle_loss_cpp, 5},
+    {"_FEShR_oracle_cpp_deriv", (DL_FUNC) &_FEShR_oracle_cpp_deriv, 5},
     {"_FEShR_URE_cpp", (DL_FUNC) &_FEShR_URE_cpp, 4},
+    {"_FEShR_URE_cpp_deriv", (DL_FUNC) &_FEShR_URE_cpp_deriv, 4},
     {NULL, NULL, 0}
 };
 

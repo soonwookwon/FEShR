@@ -4,9 +4,11 @@
 \alias{make_URE_deriv_lt}
 \title{URE}
 \usage{
-make_URE_deriv_lt(y, M, mu = 0)
+make_URE_deriv_lt(mu, y, M)
 }
 \arguments{
+\item{mu}{}
+
 \item{y}{a T-by-J data matrix}
 
 \item{M}{a length J list with the corresponding covariance matrices}

@@ -10,7 +10,8 @@
 ##' @export
 fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       type = c("URE", "EBMLE"), n_init_vals = 1,
-                      all_init_val = FALSE, verbose = FALSE) {
+                      all_init_val = FALSE, verbose = FALSE,
+                      use_cpp = FALSE) {
   
   if(!is.matrix(y)) {
     warning("y is not a matrix, assuming T=1.")
@@ -31,13 +32,18 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   if (centering == "0") {
 
     if (type == "URE") {
-        obj <- make_URE_obj(y, M, centering)
-        grad <- make_URE_deriv_lt(y, M, centering)
+      if (use_cpp) {
+        obj <- make_URE_cpp_obj(mu = matrix(0, T, J), y, M)
+        grad <- make_URE_cpp_deriv_lt(mu = matrix(0, T, J), y, M)
       } else {
-        obj <- make_nll_obj(y, M, centering)
-        grad <- make_nll_deriv_lt(y, M, centering)
-      }
-
+        obj <- make_URE_obj(mu = matrix(0, T, J), y, M)
+        grad <- make_URE_deriv_lt(mu = matrix(0, T, J), y, M)
+      }    
+    } else {
+      obj <- make_nll_obj(y, M)
+      grad <- make_nll_deriv_lt(y, M, centering)
+    }
+    
     all_vals <- NULL
     all_pars <- NULL
  

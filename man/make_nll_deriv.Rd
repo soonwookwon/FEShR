@@ -4,7 +4,7 @@
 \alias{make_nll_deriv}
 \title{URE}
 \usage{
-make_nll_deriv(y, M, mu = 0)
+make_nll_deriv(y, M, mu)
 }
 \arguments{
 \item{y}{a T-by-J data matrix}
