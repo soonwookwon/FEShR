@@ -4,7 +4,7 @@
 \alias{gen_deriv_0}
 \title{URE}
 \usage{
-gen_deriv_0(y, M, type)
+gen_deriv_0(y, M, type, W)
 }
 \arguments{
 \item{y}{a T-by-J data matrix}

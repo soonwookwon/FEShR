@@ -5,7 +5,7 @@
 ##' @param mu 
 ##' @param y 
 ##' @param M 
-gen_obj_0 <- function(y, M, type) {
+gen_obj_0 <- function(y, M, type, W) {
 
   T <- nrow(y)
   J <- ncol(y)
@@ -14,7 +14,7 @@ gen_obj_0 <- function(y, M, type) {
 
     obj <- function(L) {
       Lambda <- make_from_lowertri(L, T)
-      return(URE(mu = matrix(0, T, J), Lambda, y, M))
+      return(URE(mu = matrix(0, T, J), Lambda, y, M, W))
       
     }
   } else if (type == "EBMLE") {
@@ -34,7 +34,7 @@ gen_obj_0 <- function(y, M, type) {
 ##' @param y 
 ##' @param M 
 ##' @param type 
-gen_obj_gen <- function(y, M, type, mu_abs_bounds) {
+gen_obj_gen <- function(y, M, type, mu_abs_bounds, W) {
 
   T <- nrow(y)
 
@@ -42,7 +42,8 @@ gen_obj_gen <- function(y, M, type, mu_abs_bounds) {
     
     obj <- function(L) {
       Lambda <- make_from_lowertri(L, T)
-      return(URE(opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds), Lambda, y, M))     
+      opt_mu <- opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds, W)
+      return(URE(opt_mu, Lambda, y, M, W))     
     }
     
   } else if (type == "EBMLE") {
@@ -63,12 +64,12 @@ gen_obj_gen <- function(y, M, type, mu_abs_bounds) {
 ##' @param y 
 ##' @param M 
 ##' @param mu_abs_bounds 
-opt_mu_Lambda_URE <- function(Lambda, y, M, mu_abs_bounds)  {
+opt_mu_Lambda_URE <- function(Lambda, y, M, mu_abs_bounds, W)  {
 
   T <- nrow(y)
   J <- ncol(y)
   
-  Dmat_dvec <- get_Dmat_dvec(Lambda, y, M)
+  Dmat_dvec <- get_Dmat_dvec(Lambda, y, M, W)
   mu_opt <- quadprog::solve.QP(Dmat = Dmat_dvec$Dmat,
                                dvec = as.numeric(Dmat_dvec$dvec),
                                Amat = cbind(diag(T), - diag(T)),

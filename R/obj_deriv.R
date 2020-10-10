@@ -4,7 +4,7 @@
 ##' @param mu 
 ##' @param y a T-by-J data matrix
 ##' @param M a length J list with the corresponding covariance matrices 
-gen_deriv_0 <- function(y, M, type) {
+gen_deriv_0 <- function(y, M, type, W) {
 
   T <- nrow(y)
   J <- ncol(y)
@@ -14,7 +14,7 @@ gen_deriv_0 <- function(y, M, type) {
     deriv_lt <- function(L) {
 
       Lambda <- make_from_lowertri(L = L, T = T)
-      URE_deriv <- URE_deriv(matrix(0, T, J), Lambda, y, M)
+      URE_deriv <- URE_deriv(matrix(0, T, J), Lambda, y, M, W)
 
       L_mat <- matrix(0, nrow = T, ncol = T)
       L_mat[lower.tri(L_mat, diag = TRUE)] <- L

@@ -4,7 +4,7 @@
 \alias{opt_mu_Lambda_URE}
 \title{...}
 \usage{
-opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds)
+opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds, W)
 }
 \arguments{
 \item{Lambda}{}

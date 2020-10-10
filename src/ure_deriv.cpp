@@ -5,7 +5,8 @@
 arma::mat URE_deriv (const arma::mat& mu,
 		     const arma::mat& Lambda,
 		     const arma::mat& y,
-		     Rcpp::List& M) {
+		     Rcpp::List& M,
+		     const arma::mat& W) {
 
   int J = M.size();
   int T = y.n_rows;
@@ -21,7 +22,7 @@ arma::mat URE_deriv (const arma::mat& mu,
     // URE_j = URE_j + accu(square(M_j * inv_Lam_Mj * (y_j - mu_j)));
     URE_deriv = URE_deriv +
       2 * (arma::eye(T, T)  - inv_Lam_Mj * (y_j - mu_j) * (y_j - mu_j).t()) *
-      inv_Lam_Mj * M_j * M_j * inv_Lam_Mj;
+      inv_Lam_Mj * M_j * W * M_j * inv_Lam_Mj;
   }
   return(URE_deriv / J);
 }

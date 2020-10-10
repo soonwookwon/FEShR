@@ -2,7 +2,7 @@
 % Please edit documentation in R/fe_shrink.R
 \name{fe_shrink}
 \alias{fe_shrink}
-\title{Calculate the optiamal fixed effects estimator}
+\title{Calculate the URE shrinkage estimator}
 \usage{
 fe_shrink(
   y,
@@ -28,5 +28,5 @@ will be coerced to a 1-by-length(y) matrix.}
 \item{type}{}
 }
 \description{
-..
+...
 }

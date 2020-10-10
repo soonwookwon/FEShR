@@ -4,7 +4,7 @@
 \alias{gen_obj_gen}
 \title{...}
 \usage{
-gen_obj_gen(y, M, type, mu_abs_bounds)
+gen_obj_gen(y, M, type, mu_abs_bounds, W)
 }
 \arguments{
 \item{y}{}

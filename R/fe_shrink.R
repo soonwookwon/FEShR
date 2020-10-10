@@ -37,8 +37,8 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   
   if (centering == "0") {
     mu_opt <- matrix(0, T, J)
-    obj <- gen_obj_0(y, M, type = type)
-    grad <- gen_deriv_0(y, M, type = type)
+    obj <- gen_obj_0(y, M, type = type, W)
+    grad <- gen_deriv_0(y, M, type = type, W)
     all_vals <- NULL
     all_pars <- NULL
 
@@ -74,7 +74,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
   } else if (centering == "gen") {
 
     mu_abs_bounds <- sapply(1:T, function(t) quantile(y[t, ], tau))
-    obj <- gen_obj_gen(y, M, type = type, mu_abs_bounds)
+    obj <- gen_obj_gen(y, M, type = type, mu_abs_bounds, W)
     
     all_vals <- NULL
     all_pars <- NULL
@@ -108,7 +108,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
     }
 
     if (type == "URE") {
-      mu_opt <- opt_mu_Lambda_URE(Lambda_opt, y, M, mu_abs_bounds)
+      mu_opt <- opt_mu_Lambda_URE(Lambda_opt, y, M, mu_abs_bounds, W)
     } else if (type == "EBMLE") {
       mu_opt <- opt_mu_Lambda_nll(Lambda_opt, y, M)
     }

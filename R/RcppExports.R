@@ -5,8 +5,8 @@ get_thetahat <- function(mu, Lambda, y, M) {
     .Call(`_FEShR_get_thetahat`, mu, Lambda, y, M)
 }
 
-get_Dmat_dvec <- function(Lambda, y, M) {
-    .Call(`_FEShR_get_Dmat_dvec`, Lambda, y, M)
+get_Dmat_dvec <- function(Lambda, y, M, W) {
+    .Call(`_FEShR_get_Dmat_dvec`, Lambda, y, M, W)
 }
 
 nll <- function(mu, Lambda, y, M) {
@@ -33,11 +33,11 @@ oracle_cpp_deriv <- function(thetas, mu, Lambda, y, M) {
     .Call(`_FEShR_oracle_cpp_deriv`, thetas, mu, Lambda, y, M)
 }
 
-URE <- function(mu, Lambda, y, M) {
-    .Call(`_FEShR_URE`, mu, Lambda, y, M)
+URE <- function(mu, Lambda, y, M, W) {
+    .Call(`_FEShR_URE`, mu, Lambda, y, M, W)
 }
 
-URE_deriv <- function(mu, Lambda, y, M) {
-    .Call(`_FEShR_URE_deriv`, mu, Lambda, y, M)
+URE_deriv <- function(mu, Lambda, y, M, W) {
+    .Call(`_FEShR_URE_deriv`, mu, Lambda, y, M, W)
 }
 

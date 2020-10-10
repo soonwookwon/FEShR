@@ -4,7 +4,7 @@
 \alias{gen_obj_0}
 \title{Create objective function (URE) for optimizing Lambda}
 \usage{
-gen_obj_0(y, M, type)
+gen_obj_0(y, M, type, W)
 }
 \arguments{
 \item{y}{}

@@ -21,15 +21,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_Dmat_dvec
-Rcpp::List get_Dmat_dvec(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_get_Dmat_dvec(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+Rcpp::List get_Dmat_dvec(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W);
+RcppExport SEXP _FEShR_get_Dmat_dvec(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_Dmat_dvec(Lambda, y, M));
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_Dmat_dvec(Lambda, y, M, W));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -119,8 +120,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // URE
-double URE(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_URE(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+double URE(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W);
+RcppExport SEXP _FEShR_URE(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -128,13 +129,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(URE(mu, Lambda, y, M));
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    rcpp_result_gen = Rcpp::wrap(URE(mu, Lambda, y, M, W));
     return rcpp_result_gen;
 END_RCPP
 }
 // URE_deriv
-arma::mat URE_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_URE_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+arma::mat URE_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W);
+RcppExport SEXP _FEShR_URE_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -142,22 +144,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(URE_deriv(mu, Lambda, y, M));
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    rcpp_result_gen = Rcpp::wrap(URE_deriv(mu, Lambda, y, M, W));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_FEShR_get_thetahat", (DL_FUNC) &_FEShR_get_thetahat, 4},
-    {"_FEShR_get_Dmat_dvec", (DL_FUNC) &_FEShR_get_Dmat_dvec, 3},
+    {"_FEShR_get_Dmat_dvec", (DL_FUNC) &_FEShR_get_Dmat_dvec, 4},
     {"_FEShR_nll", (DL_FUNC) &_FEShR_nll, 4},
     {"_FEShR_nll_deriv", (DL_FUNC) &_FEShR_nll_deriv, 4},
     {"_FEShR_opt_mu_Lambda_nll", (DL_FUNC) &_FEShR_opt_mu_Lambda_nll, 3},
     {"_FEShR_opt_mu_Lambda_ol", (DL_FUNC) &_FEShR_opt_mu_Lambda_ol, 4},
     {"_FEShR_oracle_loss_cpp", (DL_FUNC) &_FEShR_oracle_loss_cpp, 5},
     {"_FEShR_oracle_cpp_deriv", (DL_FUNC) &_FEShR_oracle_cpp_deriv, 5},
-    {"_FEShR_URE", (DL_FUNC) &_FEShR_URE, 4},
-    {"_FEShR_URE_deriv", (DL_FUNC) &_FEShR_URE_deriv, 4},
+    {"_FEShR_URE", (DL_FUNC) &_FEShR_URE, 5},
+    {"_FEShR_URE_deriv", (DL_FUNC) &_FEShR_URE_deriv, 5},
     {NULL, NULL, 0}
 };
 
