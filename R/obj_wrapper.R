@@ -5,53 +5,74 @@
 ##' @param mu 
 ##' @param y 
 ##' @param M 
-make_URE_obj <- function(mu, y, M) {
+gen_obj_0 <- function(y, M, type) {
 
   T <- nrow(y)
-  
-  URE_obj <- function(L) {
-    Lambda <- make_from_lowertri(L, T)
-    return(URE(mu = mu, Lambda, y, M))
+  J <- ncol(y)
+
+  if (type == "URE") {
+
+    obj <- function(L) {
+      Lambda <- make_from_lowertri(L, T)
+      return(URE(mu = matrix(0, T, J), Lambda, y, M))
+      
+    }
+  } else if (type == "EBMLE") {
+
+    obj <- function(L) {
+      Lambda <- make_from_lowertri(L, T)
+      return(nll(mu = matrix(0, T, J), Lambda, y, M))    
+    }
   }
   
-  return(URE_obj)
+  return(obj)
 }
 
-##' Create objective function (URE) for optimizing Lambda 
+##' ...
 ##'
-##' Create objective function for optimizing Lambda that takes the centring term
-##' as given
-##' @param mu 
+##' ..
 ##' @param y 
 ##' @param M 
-make_URE_cpp_obj <- function(mu, y, M) {
+##' @param type 
+gen_obj_gen <- function(y, M, type, mu_abs_bounds) {
 
   T <- nrow(y)
-  
-  URE_obj <- function(L) {
-    Lambda <- make_from_lowertri(L, T)
-    return(URE_cpp(mu = mu, Lambda, y, M))
+
+  if (type == "URE") {
+    
+    obj <- function(L) {
+      Lambda <- make_from_lowertri(L, T)
+      return(URE(opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds), Lambda, y, M))     
+    }
+    
+  } else if (type == "EBMLE") {
+
+    obj <- function(L) {
+      Lambda <- make_from_lowertri(L, T)
+      return(URE(opt_mu_Lambda_nll(Lambda, y, M), Lambda, y, M))     
+    }
   }
-  
-  return(URE_obj)
+
+  return(obj)
 }
 
-
-##' Create objective function (EBMLE) for optimizing Lambda 
+##' ...
 ##'
-##' Create objective function for optimizing Lambda that takes the centring term
-##' as given
-##' @param mu 
+##' ..
+##' @param Lambda 
 ##' @param y 
 ##' @param M 
-make_nll_obj <- function(mu, y, M) {
+##' @param mu_abs_bounds 
+opt_mu_Lambda_URE <- function(Lambda, y, M, mu_abs_bounds)  {
 
   T <- nrow(y)
-
-  nll_obj <- function(L) {
-    Lambda <- make_from_lowertri(L, T)
-    return(nll(mu = mu, Lambda, y, M))
-  }
+  J <- ncol(y)
   
-  return(nll_obj)
+  Dmat_dvec <- get_Dmat_dvec(Lambda, y, M)
+  mu_opt <- quadprog::solve.QP(Dmat = Dmat_dvec$Dmat,
+                               dvec = as.numeric(Dmat_dvec$dvec),
+                               Amat = cbind(diag(T), - diag(T)),
+                               bvec = - rep(mu_abs_bounds, 2))$solution
+  
+  return(matrix(mu_opt, T, J))
 }

@@ -10,10 +10,10 @@ fe_shrink(
   centering = c("0", "gen", "cov"),
   W = NULL,
   type = c("URE", "EBMLE"),
+  tau = 0.95,
   n_init_vals = 1,
-  all_init_val = FALSE,
-  verbose = FALSE,
-  use_cpp = FALSE
+  all_init_vals = FALSE,
+  optim_control = list()
 )
 }
 \arguments{

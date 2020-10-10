@@ -9,9 +9,11 @@ make_ol_cpp_deriv_lt(thetas, mu, y, M)
 \arguments{
 \item{thetas}{}
 
-\item{y}{a T-by-J data matrix}
+\item{mu}{}
 
-\item{M}{a length J list with the corresponding covariance matrices}
+\item{y}{}
+
+\item{M}{}
 }
 \description{
 Calculates URE(mu, Lambda) as defined in Kwon (2020)

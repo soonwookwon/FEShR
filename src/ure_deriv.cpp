@@ -2,10 +2,10 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //[[Rcpp::export]]
-arma::mat URE_cpp_deriv (const arma::mat& mu,
-			 const arma::mat& Lambda,
-			 const arma::mat& y,
-			 Rcpp::List& M) {
+arma::mat URE_deriv (const arma::mat& mu,
+		     const arma::mat& Lambda,
+		     const arma::mat& y,
+		     Rcpp::List& M) {
 
   int J = M.size();
   int T = y.n_rows;

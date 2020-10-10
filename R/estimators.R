@@ -14,18 +14,3 @@ thetahat_j <- function(mu, Lambda, Mj, yj) {
   
   return(thetahat)
 }
-
-##' @title Shrinkage estimator for theta in the independent case
-##'
-##' ..
-##' @param mu 
-##' @param Lambda  
-##' @param M JT vector of variances
-##' @param y JT vector of observations
-thetahat_diag <- function(mu = 0, Lambda, M, y) {
-
-  shr_vec <- Lambda / (Lambda + M)
-  thetahat <- (1 -shr_vec) * mu + shr_vec * y
-  
-  return(thetahat)
-}
