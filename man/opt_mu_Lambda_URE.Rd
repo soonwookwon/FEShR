@@ -4,7 +4,7 @@
 \alias{opt_mu_Lambda_URE}
 \title{...}
 \usage{
-opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds, W)
+opt_mu_Lambda_URE(Lambda, y, M, bounds, W, missing_cells, O, Z = list())
 }
 \arguments{
 \item{Lambda}{}
@@ -13,7 +13,15 @@ opt_mu_Lambda_URE(Lambda, y, M, mu_abs_bounds, W)
 
 \item{M}{}
 
-\item{mu_abs_bounds}{}
+\item{bounds}{}
+
+\item{W}{}
+
+\item{missing_cells}{}
+
+\item{O}{}
+
+\item{Z}{}
 }
 \description{
 ..

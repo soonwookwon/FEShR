@@ -4,7 +4,18 @@
 \alias{get_theta_ol}
 \title{...}
 \usage{
-get_theta_ol(thetas, y, M, centering, diag = FALSE, n_init_vals, optim_control)
+get_theta_ol(
+  thetas,
+  y,
+  M,
+  centering,
+  diag_lam = FALSE,
+  W = NULL,
+  Z = list(),
+  n_init_vals,
+  all_init_vals = FALSE,
+  optim_control
+)
 }
 \arguments{
 \item{thetas}{}
@@ -15,9 +26,13 @@ get_theta_ol(thetas, y, M, centering, diag = FALSE, n_init_vals, optim_control)
 
 \item{centering}{}
 
-\item{diag}{}
+\item{diag_lam}{}
+
+\item{W}{}
 
 \item{n_init_vals}{}
+
+\item{optim_control}{}
 }
 \description{
 ..

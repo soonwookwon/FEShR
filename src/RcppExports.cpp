@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // get_thetahat
-arma::mat get_thetahat(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_get_thetahat(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+arma::mat get_thetahat(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_get_thetahat(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,27 +16,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_thetahat(mu, Lambda, y, M));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_Dmat_dvec
-Rcpp::List get_Dmat_dvec(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W);
-RcppExport SEXP _FEShR_get_Dmat_dvec(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_Dmat_dvec(Lambda, y, M, W));
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_thetahat(mu, Lambda, y, M, missing_cells, O));
     return rcpp_result_gen;
 END_RCPP
 }
 // nll
-double nll(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_nll(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+double nll(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_nll(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -44,13 +32,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(nll(mu, Lambda, y, M));
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(nll(mu, Lambda, y, M, missing_cells, O));
     return rcpp_result_gen;
 END_RCPP
 }
 // nll_deriv
-arma::mat nll_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_nll_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+arma::mat nll_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_nll_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,26 +48,61 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(nll_deriv(mu, Lambda, y, M));
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(nll_deriv(mu, Lambda, y, M, missing_cells, O));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gam_to_mu
+arma::mat gam_to_mu(const arma::colvec& gam_opt, Rcpp::List& Z, int T);
+RcppExport SEXP _FEShR_gam_to_mu(SEXP gam_optSEXP, SEXP ZSEXP, SEXP TSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type gam_opt(gam_optSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< int >::type T(TSEXP);
+    rcpp_result_gen = Rcpp::wrap(gam_to_mu(gam_opt, Z, T));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_Dmat_dvec
+Rcpp::List get_Dmat_dvec(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W, bool missing_cells, Rcpp::List& O, Rcpp::List& Z);
+RcppExport SEXP _FEShR_get_Dmat_dvec(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP, SEXP missing_cellsSEXP, SEXP OSEXP, SEXP ZSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type Z(ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_Dmat_dvec(Lambda, y, M, W, missing_cells, O, Z));
     return rcpp_result_gen;
 END_RCPP
 }
 // opt_mu_Lambda_nll
-arma::mat opt_mu_Lambda_nll(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_opt_mu_Lambda_nll(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+arma::mat opt_mu_Lambda_nll(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O, Rcpp::List& Z);
+RcppExport SEXP _FEShR_opt_mu_Lambda_nll(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP, SEXP ZSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(opt_mu_Lambda_nll(Lambda, y, M));
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type Z(ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(opt_mu_Lambda_nll(Lambda, y, M, missing_cells, O, Z));
     return rcpp_result_gen;
 END_RCPP
 }
 // opt_mu_Lambda_ol
-arma::mat opt_mu_Lambda_ol(const arma::mat& thetas, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_opt_mu_Lambda_ol(SEXP thetasSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+arma::mat opt_mu_Lambda_ol(const arma::mat& thetas, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W, bool missing_cells, Rcpp::List& O, Rcpp::List& Z);
+RcppExport SEXP _FEShR_opt_mu_Lambda_ol(SEXP thetasSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP, SEXP missing_cellsSEXP, SEXP OSEXP, SEXP ZSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,13 +110,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(opt_mu_Lambda_ol(thetas, Lambda, y, M));
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type Z(ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(opt_mu_Lambda_ol(thetas, Lambda, y, M, W, missing_cells, O, Z));
     return rcpp_result_gen;
 END_RCPP
 }
-// oracle_loss_cpp
-double oracle_loss_cpp(const arma::mat& thetas, const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_oracle_loss_cpp(SEXP thetasSEXP, SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+// oracle_loss
+double oracle_loss(const arma::mat& thetas, const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_oracle_loss(SEXP thetasSEXP, SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -100,13 +129,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(oracle_loss_cpp(thetas, mu, Lambda, y, M));
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(oracle_loss(thetas, mu, Lambda, y, M, W, missing_cells, O));
     return rcpp_result_gen;
 END_RCPP
 }
-// oracle_cpp_deriv
-arma::mat oracle_cpp_deriv(const arma::mat& thetas, const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M);
-RcppExport SEXP _FEShR_oracle_cpp_deriv(SEXP thetasSEXP, SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP) {
+// oracle_deriv
+arma::mat oracle_deriv(const arma::mat& thetas, const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_oracle_deriv(SEXP thetasSEXP, SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -115,13 +147,63 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(oracle_cpp_deriv(thetas, mu, Lambda, y, M));
+    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(oracle_deriv(thetas, mu, Lambda, y, M, W, missing_cells, O));
+    return rcpp_result_gen;
+END_RCPP
+}
+// opt_LamTmT_Lambda
+arma::colvec opt_LamTmT_Lambda(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_opt_LamTmT_Lambda(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(opt_LamTmT_Lambda(Lambda, y, M, missing_cells, O));
+    return rcpp_result_gen;
+END_RCPP
+}
+// UPE
+double UPE(const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O, double bounds);
+RcppExport SEXP _FEShR_UPE(SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP, SEXP boundsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< double >::type bounds(boundsSEXP);
+    rcpp_result_gen = Rcpp::wrap(UPE(Lambda, y, M, missing_cells, O, bounds));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_thetahat_fc
+arma::mat get_thetahat_fc(const arma::colvec& LamTmT, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_get_thetahat_fc(SEXP LamTmTSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type LamTmT(LamTmTSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_thetahat_fc(LamTmT, Lambda, y, M, missing_cells, O));
     return rcpp_result_gen;
 END_RCPP
 }
 // URE
-double URE(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W);
-RcppExport SEXP _FEShR_URE(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP) {
+double URE(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_URE(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -130,13 +212,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(URE(mu, Lambda, y, M, W));
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(URE(mu, Lambda, y, M, W, missing_cells, O));
     return rcpp_result_gen;
 END_RCPP
 }
 // URE_deriv
-arma::mat URE_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W);
-RcppExport SEXP _FEShR_URE_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP) {
+arma::mat URE_deriv(const arma::mat& mu, const arma::mat& Lambda, const arma::mat& y, Rcpp::List& M, const arma::mat& W, bool missing_cells, Rcpp::List& O);
+RcppExport SEXP _FEShR_URE_deriv(SEXP muSEXP, SEXP LambdaSEXP, SEXP ySEXP, SEXP MSEXP, SEXP WSEXP, SEXP missing_cellsSEXP, SEXP OSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -145,22 +229,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::List& >::type M(MSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(URE_deriv(mu, Lambda, y, M, W));
+    Rcpp::traits::input_parameter< bool >::type missing_cells(missing_cellsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type O(OSEXP);
+    rcpp_result_gen = Rcpp::wrap(URE_deriv(mu, Lambda, y, M, W, missing_cells, O));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_FEShR_get_thetahat", (DL_FUNC) &_FEShR_get_thetahat, 4},
-    {"_FEShR_get_Dmat_dvec", (DL_FUNC) &_FEShR_get_Dmat_dvec, 4},
-    {"_FEShR_nll", (DL_FUNC) &_FEShR_nll, 4},
-    {"_FEShR_nll_deriv", (DL_FUNC) &_FEShR_nll_deriv, 4},
-    {"_FEShR_opt_mu_Lambda_nll", (DL_FUNC) &_FEShR_opt_mu_Lambda_nll, 3},
-    {"_FEShR_opt_mu_Lambda_ol", (DL_FUNC) &_FEShR_opt_mu_Lambda_ol, 4},
-    {"_FEShR_oracle_loss_cpp", (DL_FUNC) &_FEShR_oracle_loss_cpp, 5},
-    {"_FEShR_oracle_cpp_deriv", (DL_FUNC) &_FEShR_oracle_cpp_deriv, 5},
-    {"_FEShR_URE", (DL_FUNC) &_FEShR_URE, 5},
-    {"_FEShR_URE_deriv", (DL_FUNC) &_FEShR_URE_deriv, 5},
+    {"_FEShR_get_thetahat", (DL_FUNC) &_FEShR_get_thetahat, 6},
+    {"_FEShR_nll", (DL_FUNC) &_FEShR_nll, 6},
+    {"_FEShR_nll_deriv", (DL_FUNC) &_FEShR_nll_deriv, 6},
+    {"_FEShR_gam_to_mu", (DL_FUNC) &_FEShR_gam_to_mu, 3},
+    {"_FEShR_get_Dmat_dvec", (DL_FUNC) &_FEShR_get_Dmat_dvec, 7},
+    {"_FEShR_opt_mu_Lambda_nll", (DL_FUNC) &_FEShR_opt_mu_Lambda_nll, 6},
+    {"_FEShR_opt_mu_Lambda_ol", (DL_FUNC) &_FEShR_opt_mu_Lambda_ol, 8},
+    {"_FEShR_oracle_loss", (DL_FUNC) &_FEShR_oracle_loss, 8},
+    {"_FEShR_oracle_deriv", (DL_FUNC) &_FEShR_oracle_deriv, 8},
+    {"_FEShR_opt_LamTmT_Lambda", (DL_FUNC) &_FEShR_opt_LamTmT_Lambda, 5},
+    {"_FEShR_UPE", (DL_FUNC) &_FEShR_UPE, 6},
+    {"_FEShR_get_thetahat_fc", (DL_FUNC) &_FEShR_get_thetahat_fc, 6},
+    {"_FEShR_URE", (DL_FUNC) &_FEShR_URE, 7},
+    {"_FEShR_URE_deriv", (DL_FUNC) &_FEShR_URE_deriv, 7},
     {NULL, NULL, 0}
 };
 

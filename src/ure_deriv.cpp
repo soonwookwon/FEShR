@@ -6,23 +6,49 @@ arma::mat URE_deriv (const arma::mat& mu,
 		     const arma::mat& Lambda,
 		     const arma::mat& y,
 		     Rcpp::List& M,
-		     const arma::mat& W) {
-
+		     const arma::mat& W,
+		     bool missing_cells,
+		     Rcpp::List& O) {
   int J = M.size();
   int T = y.n_rows;
     
   arma::mat URE_deriv = arma::zeros(T,T);
-  
-  for (int j = 0; j < J; ++j) {
-    arma::mat M_j = M[j];
-    arma::colvec y_j = y.col(j);
-    arma::colvec mu_j = mu.col(j);
-    arma::mat inv_Lam_Mj = inv_sympd(Lambda + M_j); 
-    // double URE_j = -2 * trace(inv_Lam_Mj * M_j * M_j);
-    // URE_j = URE_j + accu(square(M_j * inv_Lam_Mj * (y_j - mu_j)));
-    URE_deriv = URE_deriv +
-      2 * (arma::eye(T, T)  - inv_Lam_Mj * (y_j - mu_j) * (y_j - mu_j).t()) *
-      inv_Lam_Mj * M_j * W * M_j * inv_Lam_Mj;
-  }
+
+  if (!missing_cells) {
+    for (int j = 0; j < J; ++j) {
+      arma::mat M_j = M[j];
+      arma::colvec y_j = y.col(j);
+      arma::colvec mu_j = mu.col(j);
+      arma::mat inv_Lam_Mj = inv_sympd(Lambda + M_j); 
+      // double URE_j = -2 * trace(inv_Lam_Mj * M_j * M_j);
+      // URE_j = URE_j + accu(square(M_j * inv_Lam_Mj * (y_j - mu_j)));
+      URE_deriv = URE_deriv +
+	2 * (arma::eye(T, T)  - inv_Lam_Mj * (y_j - mu_j) * (y_j - mu_j).t()) *
+	inv_Lam_Mj * M_j * W * M_j * inv_Lam_Mj;
+    }
+  } else {
+    arma::mat I = arma::eye(T,T);
+    for (int j = 0; j < J; ++j) {
+      arma::uvec O_j = O[j];
+      O_j = O_j - 1;
+      arma::mat O_j_mat = I.rows(O_j);
+      double o_j = O_j.n_elem;
+      arma::mat M_j = M[j];
+      M_j = M_j.submat(O_j, O_j);
+      arma::colvec y_j = y.col(j);
+      y_j = y_j.elem(O_j);
+      arma::colvec mu_j =  mu.col(j);
+      mu_j = mu_j.elem(O_j);
+      arma::mat Lam_j = Lambda.submat(O_j, O_j);
+      arma::mat W_j = W.submat(O_j, O_j);
+      arma::mat inv_Lam_Mj = inv_sympd(Lam_j + M_j);
+      // double URE_j = -2 * trace(inv_Lam_Mj * M_j * M_j);
+      // URE_j = URE_j + accu(square(M_j * inv_Lam_Mj * (y_j - mu_j)));
+      URE_deriv = URE_deriv +
+	(2 / o_j) * O_j_mat.t() *
+	(arma::eye(o_j, o_j) - inv_Lam_Mj * (y_j - mu_j) * (y_j - mu_j).t() ) *
+	inv_Lam_Mj * M_j * W_j * M_j * inv_Lam_Mj * O_j_mat;
+    }
+  }   
   return(URE_deriv / J);
 }

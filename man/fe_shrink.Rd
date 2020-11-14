@@ -2,31 +2,74 @@
 % Please edit documentation in R/fe_shrink.R
 \name{fe_shrink}
 \alias{fe_shrink}
-\title{Calculate the URE shrinkage estimator}
+\title{Calculate URE estimator for the fixed effects}
 \usage{
 fe_shrink(
   y,
   M,
   centering = c("0", "gen", "cov"),
   W = NULL,
+  Z = list(),
   type = c("URE", "EBMLE"),
+  diag_lam = FALSE,
   tau = 0.95,
+  B = 1000,
   n_init_vals = 1,
   all_init_vals = FALSE,
   optim_control = list()
 )
 }
 \arguments{
-\item{y}{a T-by-J data matrix, possibly correlated
-within each column. If a vector is provided, it is assumed that T=1 and
+\item{y}{a T-by-J data matrix that consists of the least sqaures estimators
+of the fixed effects. If a vector is provided, it is assumed that T=1 and
 will be coerced to a 1-by-length(y) matrix.}
 
-\item{M}{length J list of the covaraince matrices.}
+\item{M}{length J list of the varaince matrices}
 
-\item{centering}{Centering}
+\item{centering}{location to shrink toward. If \code{centering="0"} the
+estimator that shrinks to zero is computed (this is the same with
+shrinking to the grand mean if the fixed effects are demeaned for each
+period); \code{centering="gen"} shrinks the data to a general data-driven
+location; and \code{centering="cov"} shrinks to a linear combination of
+the covariates.}
 
-\item{type}{}
+\item{W}{T-by-T weight matrix.}
+
+\item{Z}{length J list of the T-by-k covariate matrices}
+
+\item{type}{type of shrinkage estimator; possible options are \code{URE} and
+\code{EBMLE}}
+
+\item{tau}{\eqn{\tau} used to define the set \eqn{\mathcal{M}}}
+
+\item{n_init_vals}{Number of initial values to try for optimization}
+
+\item{all_init_vals}{If TRUE, print and return optimization results for all
+initial values tried}
+
+\item{optim_control}{list of control variables to be passed to \code{optim}}
+}
+\value{
+Returns a list with the following components \describe{
+\item{thetahat}{T-by-J matrix of the optimal shrinkage estimator}
+\item{mu_opt}{ T-by-J matrix of optimal shrinkage location. Unless
+\code{centering="cov"}, all columns are the same.}
+\item{Lambda_opt}{T-by-T matrix of the optimal \eqn{\Lambda} }
+\item{obj_val}{Minimized value of the objective function for the
+optimization problem solved to tune the hyperparameters}
+\item{all_vals}{Minimized value of the objective function for each initial
+value. Returns \code{NULL} if \code{all_init_vals==FALSE}}
+\item{all_pars}{Optimal hyperparameters for each initial value. Returns
+\code{NULL} if \code{all_init_vals==FALSE}} }
 }
 \description{
-...
+This function calculates the URE estimator for the fixed effects, as
+described in Kwon (2020). If \code{type="EBMLE"}, the Empirical Bayes MLE is
+calculated instead.
+}
+\references{
+{
+\cite{Soonwoo Kwon. 2020.
+"Optimal Shrinkage Estimation of Fixed Effects in Linear Panel Data Models." \emph{working paper}.}
+}
 }

@@ -4,40 +4,62 @@
 ##' @param mu 
 ##' @param y a T-by-J data matrix
 ##' @param M a length J list with the corresponding covariance matrices 
-gen_deriv_0 <- function(y, M, type, W) {
+gen_deriv <- function(y, M, type, W, missing_cells, O, diag_lam) {
 
   T <- nrow(y)
   J <- ncol(y)
 
-  if (type == "URE") {
-    
-    deriv_lt <- function(L) {
-
-      Lambda <- make_from_lowertri(L = L, T = T)
-      URE_deriv <- URE_deriv(matrix(0, T, J), Lambda, y, M, W)
-
-      L_mat <- matrix(0, nrow = T, ncol = T)
-      L_mat[lower.tri(L_mat, diag = TRUE)] <- L
-      URE_deriv_lt <- (URE_deriv + t(URE_deriv)) %*% L_mat 
-      URE_deriv_lt <- URE_deriv_lt[lower.tri(URE_deriv_lt, diag = TRUE)]
+  if (!diag_lam) {
+    if (type == "URE") {
       
-      return((1/J) * as.vector(URE_deriv_lt)) 
-    }  
-  } else if (type == "EBMLE") {
+      deriv_lt <- function(L) {
+
+        Lambda <- make_from_lowertri(L = L, T = T)
+        URE_deriv <- URE_deriv(matrix(0, T, J), Lambda, y, M, W, missing_cells, O)
+
+        L_mat <- matrix(0, nrow = T, ncol = T)
+        L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+        URE_deriv_lt <- (URE_deriv + t(URE_deriv)) %*% L_mat 
+        URE_deriv_lt <- URE_deriv_lt[lower.tri(URE_deriv_lt, diag = TRUE)]
+        
+        return(as.vector(URE_deriv_lt)) 
+      }  
+    } else if (type == "EBMLE") {
+      
+      deriv_lt <- function(L) {
+
+        Lambda <- make_from_lowertri(L = L, T = T)
+        nll_deriv <- nll_deriv(matrix(0, T, J), Lambda, y, M, missing_cells, O)
+
+        L_mat <- matrix(0, nrow = T, ncol = T)
+        L_mat[lower.tri(L_mat, diag = TRUE)] <- L
+        nll_deriv_lt <- (nll_deriv + t(nll_deriv)) %*% L_mat 
+        nll_deriv_lt <- nll_deriv_lt[lower.tri(nll_deriv_lt, diag = TRUE)]
+        return(as.vector(nll_deriv_lt)) 
+      }
+    }
+  } else {
+    if (type == "URE") {
+      
+      deriv_lt <- function(D) {
+
+        Lambda <- diag(D)^2
+        URE_deriv <- URE_deriv(matrix(0, T, J), Lambda, y, M, W, missing_cells, O)
     
-    deriv_lt <- function(L) {
+        return(2 * URE_deriv_lt * D) 
+      }  
+    } else if (type == "EBMLE") {
+      
+      deriv_lt <- function(D) {
 
-      Lambda <- make_from_lowertri(L = L, T = T)
-      nll_deriv <- nll_deriv(matrix(0, T, J), Lambda, y, M)
+        Lambda <- diag(D)^2
+        nll_deriv <- nll_deriv(matrix(0, T, J), Lambda, y, M, missing_cells, O)
 
-      L_mat <- matrix(0, nrow = T, ncol = T)
-      L_mat[lower.tri(L_mat, diag = TRUE)] <- L
-      nll_deriv_lt <- (nll_deriv + t(nll_deriv)) %*% L_mat 
-      nll_deriv_lt <- nll_deriv_lt[lower.tri(nll_deriv_lt, diag = TRUE)]
-      return((1/J) * as.vector(nll_deriv_lt)) 
+        return(2 * nll_deriv_lt * D) 
+      }
     }
   }
-
+  
   return(deriv_lt)
 }
 
