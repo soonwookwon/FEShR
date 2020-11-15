@@ -12,7 +12,7 @@ devtools::install_github("soonwookwon/FEShR")
 
 ## Instructions
 The two main functions are `fe_shrink` and `upe_forecast`. Please see the help
-pages for each function for details:
+page of each function for details:
 ```
 ?fe_shrink
 ?upe_forecast
