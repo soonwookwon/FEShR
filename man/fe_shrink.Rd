@@ -20,13 +20,13 @@ fe_shrink(
 )
 }
 \arguments{
-\item{y}{a T-by-J data matrix that consists of the least sqaures estimators
+\item{y}{T-by-J data matrix that consists of the least sqaures estimators
 of the fixed effects. If a vector is provided, it is assumed that T=1 and
 will be coerced to a 1-by-length(y) matrix.}
 
-\item{M}{length J list of the varaince matrices}
+\item{M}{Length J list of the varaince matrices.}
 
-\item{centering}{location to shrink toward. If \code{centering="0"} the
+\item{centering}{Location to shrink toward. If \code{centering="0"} the
 estimator that shrinks to zero is computed (this is the same with
 shrinking to the grand mean if the fixed effects are demeaned for each
 period); \code{centering="gen"} shrinks the data to a general data-driven
@@ -35,32 +35,32 @@ the covariates.}
 
 \item{W}{T-by-T weight matrix.}
 
-\item{Z}{length J list of the T-by-k covariate matrices}
+\item{Z}{Length J list of the T-by-k covariate matrices.}
 
-\item{type}{type of shrinkage estimator; possible options are \code{URE} and
-\code{EBMLE}}
+\item{type}{Type of shrinkage estimator; possible options are \code{URE} and
+\code{EBMLE}.}
 
-\item{tau}{\eqn{\tau} used to define the set \eqn{\mathcal{M}}}
+\item{tau}{\eqn{\tau} used to define the hyperparameter space for \eqn{\mu}.}
 
-\item{n_init_vals}{Number of initial values to try for optimization}
+\item{n_init_vals}{Number of initial values to try for optimization.}
 
 \item{all_init_vals}{If TRUE, print and return optimization results for all
-initial values tried}
+initial values tried.}
 
-\item{optim_control}{list of control variables to be passed to \code{optim}}
+\item{optim_control}{List of control variables to be passed to \code{optim}.}
 }
 \value{
 Returns a list with the following components \describe{
-\item{thetahat}{T-by-J matrix of the optimal shrinkage estimator}
-\item{mu_opt}{ T-by-J matrix of optimal shrinkage location. Unless
+\item{thetahat}{T-by-J matrix of the optimal shrinkage estimator.}
+\item{mu_opt}{T-by-J matrix of optimal shrinkage location. Unless
 \code{centering="cov"}, all columns are the same.}
-\item{Lambda_opt}{T-by-T matrix of the optimal \eqn{\Lambda} }
+\item{Lambda_opt}{T-by-T matrix of the optimal \eqn{\Lambda}. }
 \item{obj_val}{Minimized value of the objective function for the
-optimization problem solved to tune the hyperparameters}
+optimization problem solved to tune the hyperparameters.}
 \item{all_vals}{Minimized value of the objective function for each initial
-value. Returns \code{NULL} if \code{all_init_vals==FALSE}}
+value. Returns \code{NULL} if \code{all_init_vals==FALSE}.}
 \item{all_pars}{Optimal hyperparameters for each initial value. Returns
-\code{NULL} if \code{all_init_vals==FALSE}} }
+\code{NULL} if \code{all_init_vals==FALSE}.} }
 }
 \description{
 This function calculates the URE estimator for the fixed effects, as

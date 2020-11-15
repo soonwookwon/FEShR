@@ -1,31 +1,32 @@
 ##' Calculate the UPE forecast
 ##'
-##' This function calculates the UPE forecases as described in Kwon (2020)
+##' This function calculates the UPE forecasts as described in Kwon (2020)
 ##' 
 ##' @param y T-by-J data matrix, possibly correlated within each column. If a
 ##'   vector is provided, it is assumed that T=1 and will be coerced to a
 ##'   1-by-length(y) matrix.
 ##' @param M Length J list of the covaraince matrices.
 ##' @param centering Location to shrink toward. Currently, only shrinkage toward
-##'   0 is supported
-##' @param n_init_vals Number of initial values to try for optimization
+##'   0 is supported.
+##' @param n_init_vals Number of initial values to try for optimization.
 ##' @param all_init_vals If TRUE, print and return optimization results for all
-##'   initial values tried
+##'   initial values tried.
 ##' @param optim_control List of control variables to be passed to \code{optim}
-##' @param K Constant used to define the parameter space \eqn{\mathcal{L}}
+##' @param K Constant used to define the hyperparameter space. Please refer to
+##'   the paper for details.
 ##' @return Returns a list with the following components \describe{
-##'   \item{thetahat}{1-by-J matrix of the optimal forecasts}
-##'   \item{LambTmT_opt}{T-1 vector of the optimal \eqn{\Lambda_{T,-T}} }
-##'   \item{Lambda_opt}{(T-1)-by-T matrix of the optimal \eqn{\Lambda_{-T}} }
+##'   \item{thetahat}{1-by-J matrix of the optimal forecasts.}
+##'   \item{LambTmT_opt}{T-1 vector of the optimal \eqn{\Lambda_{T,-T}}. }
+##'   \item{Lambda_opt}{(T-1)-by-T matrix of the optimal \eqn{\Lambda_{-T}}. }
 ##'   \item{obj_val}{Minimized value of the objective function for the
-##'   optimization problem solved to tune the hyperparameters}
+##'   optimization problem solved to tune the hyperparameters.}
 ##'   \item{all_vals}{Minimized value of the objective function for each initial
-##'   value. Returns \code{NULL} if \code{all_init_vals==FALSE}}
+##'   value. Returns \code{NULL} if \code{all_init_vals==FALSE}.}
 ##'   \item{all_pars}{Optimal hyperparameters for each initial value. Returns
-##'   \code{NULL} if \code{all_init_vals==FALSE}}
+##'   \code{NULL} if \code{all_init_vals==FALSE}.}
 ##'   \item{all_thetahats}{Optimal
 ##'   forecasts for each initial value. Returns \code{NULL} if
-##'   \code{all_init_vals==FALSE}} }
+##'   \code{all_init_vals==FALSE}.} }
 ##'
 ##' @references{ \cite{Soonwoo Kwon. 2020.
 ##'   "Optimal Shrinkage Estimation of Fixed Effects in Linear Panel Data Models."
