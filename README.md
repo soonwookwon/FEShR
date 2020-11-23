@@ -1,5 +1,7 @@
 # FEShR
 
+**F**ixed **E**ffects **Sh**rinkage estimation with **R**
+
 This R package implements the URE estimators introduced by [Kwon
 (2020)](https://soonwookwon.github.io/files/Soonwoo_Kwon_JMP.pdf).
 
