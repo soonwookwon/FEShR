@@ -74,9 +74,9 @@ double UPE (const arma::mat& Lambda,
       arma::mat M_j = M[j];
       M_j = M_j.submat(0, 0, T-2, T-2);
       arma::colvec y_j = y.col(j);
-      y_j = y_j.head(T-1);
       double y_jt = arma::as_scalar(y_j.tail(1));
-       
+      y_j = y_j.head(T-1);
+
       arma::mat inv_Lam_Mj = inv_sympd(Lambda + M_j);
             
       UPE = UPE +
