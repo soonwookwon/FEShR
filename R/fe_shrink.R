@@ -23,6 +23,9 @@
 ##' @param all_init_vals If TRUE, print and return optimization results for all
 ##'   initial values tried.
 ##' @param optim_control List of control variables to be passed to \code{optim}.
+##' @param init If \code{init="moment"}, the first initial value is the
+##'   projected moment estimator of \eqn{\Lambda} and the others are random
+##'   draws; if \code{init="random"}, all initial values are random draws.
 ##' @return Returns a list with the following components \describe{
 ##'   \item{thetahat}{T-by-J matrix of the optimal shrinkage estimator.}
 ##'   \item{mu_opt}{T-by-J matrix of optimal shrinkage location. Unless
@@ -43,7 +46,8 @@
 fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                       Z = list(), type = c("URE", "EBMLE"), diag_lam = FALSE,
                       tau = .95, B = 1e03, n_init_vals = 1,
-                      all_init_vals = FALSE, optim_control = list()) {
+                      all_init_vals = FALSE, optim_control = list(),
+                      init = c("moment", "random")) {
 
   # Some sanity checks
   if(!is.matrix(y)) {
@@ -61,6 +65,7 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
 
   centering <- match.arg(centering)
   type <- match.arg(type)
+  init <- match.arg(init)
   
   print(paste0("method=", type, ", centering=", centering))
   T <- nrow(y)
@@ -105,6 +110,10 @@ fe_shrink <- function(y, M, centering = c("0", "gen", "cov"), W = NULL,
                            nrow = n_init_vals)
   } else {
     init_val_mat <- matrix(rnorm(n_init_vals * T), nrow = n_init_vals)
+  }
+  if (init == "moment") {
+    init_val_mat[1, ] <- .moment_init(y, M, centering, Z, missing_cells, O,
+                                      diag_lam)
   }
   
   opt <- NULL

@@ -11,7 +11,8 @@ upe_forecast(
   n_init_vals = 1,
   all_init_vals = FALSE,
   optim_control = list(),
-  K = 1000
+  K = 1000,
+  init = c("moment", "random")
 )
 }
 \arguments{
@@ -33,6 +34,11 @@ initial values tried.}
 
 \item{K}{Constant used to define the hyperparameter space. Please refer to
 the paper for details.}
+
+\item{init}{If \code{init="moment"}, the first initial value is the
+projected moment estimator of \eqn{\Lambda_{-T}} and the others are
+random draws; if \code{init="random"}, all initial values are random
+draws.}
 }
 \value{
 Returns a list with the following components \describe{

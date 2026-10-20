@@ -16,7 +16,8 @@ fe_shrink(
   B = 1000,
   n_init_vals = 1,
   all_init_vals = FALSE,
-  optim_control = list()
+  optim_control = list(),
+  init = c("moment", "random")
 )
 }
 \arguments{
@@ -48,6 +49,10 @@ the covariates.}
 initial values tried.}
 
 \item{optim_control}{List of control variables to be passed to \code{optim}.}
+
+\item{init}{If \code{init="moment"}, the first initial value is the
+projected moment estimator of \eqn{\Lambda} and the others are random
+draws; if \code{init="random"}, all initial values are random draws.}
 }
 \value{
 Returns a list with the following components \describe{

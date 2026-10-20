@@ -14,6 +14,10 @@
 ##' @param optim_control List of control variables to be passed to \code{optim}
 ##' @param K Constant used to define the hyperparameter space. Please refer to
 ##'   the paper for details.
+##' @param init If \code{init="moment"}, the first initial value is the
+##'   projected moment estimator of \eqn{\Lambda_{-T}} and the others are
+##'   random draws; if \code{init="random"}, all initial values are random
+##'   draws.
 ##' @return Returns a list with the following components \describe{
 ##'   \item{thetahat}{1-by-J matrix of the optimal forecasts.}
 ##'   \item{LambTmT_opt}{T-1 vector of the optimal \eqn{\Lambda_{T,-T}}. }
@@ -34,7 +38,8 @@
 ##' @export
 upe_forecast <- function(y, M, centering = c("0"),
                          n_init_vals = 1, all_init_vals = FALSE,
-                         optim_control = list(), K = 1e03) {
+                         optim_control = list(), K = 1e03,
+                         init = c("moment", "random")) {
 
   # Some sanity checks
   if(!is.matrix(y)) {
@@ -51,6 +56,7 @@ upe_forecast <- function(y, M, centering = c("0"),
   }
 
   centering <- match.arg(centering)
+  init <- match.arg(init)
   
   print(paste0("centering=", centering))
   T <- nrow(y)
@@ -84,6 +90,10 @@ upe_forecast <- function(y, M, centering = c("0"),
   opt <- NULL
   init_val_mat <- matrix(rnorm(n_init_vals * (T - 1) * T / 2),
                          nrow = n_init_vals)
+  if (init == "moment") {
+    init_val_mat[1, ] <- .moment_init(y, M, "0", list(), missing_cells, O,
+                                      FALSE, periods = 1:(T - 1))
+  }
   
   for (j in 1:n_init_vals) {
     init_val <- init_val_mat[j, ]
